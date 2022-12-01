@@ -6,7 +6,9 @@ public class Cannon : MonoBehaviour
 {
     [SerializeField] Transform barrel;
     [SerializeField] GameObject bulletPrefab;
-    public static float bulletSpeed = 3000f;
+    public static float bulletSpeed = 5f;
+    float reload = 2f;
+    float timer = 0f;
     void Start()
     {
         
@@ -18,11 +20,16 @@ public class Cannon : MonoBehaviour
     }
     void Shoting()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        timer += Time.deltaTime;
+        if (timer > reload)
         {
-            GameObject bullet = Instantiate(bulletPrefab, barrel.position, barrel.rotation);
-            Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
-            rb.velocity = rb.transform.right * bulletSpeed * Time.deltaTime;
+            if (Input.GetKeyDown(KeyCode.Space))
+            {
+                GameObject bullet = Instantiate(bulletPrefab, barrel.position, barrel.rotation);
+                Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
+                rb.AddForce(barrel.right * bulletSpeed, ForceMode2D.Impulse);
+                timer = 0f;
+            }
         }
     }
 }

@@ -30,6 +30,7 @@ public class BulletBlue : MonoBehaviour
                 ScoresController.ScoreBlue++;
                 Destroy(gameObject);
                 SceneManager.LoadScene(0);
+                TankRed.state = TankRed.State.Choice;
                 break;
             case "Player":
                 Tank.state = Tank.State.Stop;
@@ -45,7 +46,7 @@ public class BulletBlue : MonoBehaviour
                 Vector2 derection = -collision.relativeVelocity.normalized;
                 Vector2 normal = collision.contacts[0].normal;
                 Vector2 newDerection = Vector2.Reflect(derection, normal);
-                rb.velocity = newDerection * (Cannon.bulletSpeed * Time.deltaTime);
+                rb.AddForce(newDerection * Cannon.bulletSpeed, ForceMode2D.Impulse);
                 break;
         }
     }

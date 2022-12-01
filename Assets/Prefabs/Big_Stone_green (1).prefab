@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8702627673899471083}
   - component: {fileID: 8702627673899471082}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: stoneGreen_sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 8702627674241030802}
   - component: {fileID: 8702627674241030800}
   - component: {fileID: 1847973344}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Big_Stone_green (1)
   m_TagString: Stone
   m_Icon: {fileID: 0}
@@ -110,7 +110,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8702627674241030812}
   m_LocalRotation: {x: 0, y: 0, z: -0.042695235, w: 0.99908817}
-  m_LocalPosition: {x: -109.2, y: 19.1, z: -1.622}
+  m_LocalPosition: {x: -109.2, y: 19.1, z: 0}
   m_LocalScale: {x: 3.74, y: 3.74, z: 3.74}
   m_ConstrainProportionsScale: 0
   m_Children:

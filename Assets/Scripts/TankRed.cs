@@ -1,37 +1,141 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class TankRed : MonoBehaviour
 {
-    [SerializeField] float constSpeed;
+    [SerializeField] Transform barrel;
+    [SerializeField] GameObject bulletPrefab;
+    float bulletSpeed = 5f;
+    [SerializeField] float tankSpeed;
+    public float slerp;
     Rigidbody2D tankRedRigidbody;
-    PolygonCollider2D tankRedPolygonCollider;
-    public float distance = 1;
-    static public Transform player;
-    static public Transform cpu;
+    public enum State { Navigation, Move, Attack, Choice };
+    public static State state = State.Attack;
+    [SerializeField] Transform[] point = new Transform[4];
 
-    //вектор к красному танку
-    //Vector2 blueTank = new Vector2(player.position.magnitude, cpu.position.magnitude);
-    //вектор к синему танку
-    Vector2 redTank = new Vector2(cpu.position.magnitude, player.position.magnitude);
+    float navigationTimer = 3f;
+    float moveTimer = 2f;
+    float attackTimer = 1f;
+    float shootTimer = 0f;
+    static int position = 2;
 
     void Start()
     {
-        tankRedRigidbody = GetComponent<Rigidbody2D>();
-        tankRedPolygonCollider = GetComponent<PolygonCollider2D>();
-        player = GameObject.FindGameObjectWithTag("Player").transform;
-        cpu = GameObject.FindGameObjectWithTag("CPU").transform;
+        tankRedRigidbody = GetComponent<Rigidbody2D>(); 
     }
     void Update()
     {
-        if (Vector2.Distance(transform.position, player.position) > distance)
+        Choice();
+        Move();
+        RotateAtTank();
+        Raycast();
+        Navigation();
+        Debug.Log(state);
+    }
+    private void FixedUpdate()
+    {
+
+    }
+    void Raycast()
+    {
+        RaycastHit2D hit = Physics2D.Raycast(barrel.transform.position, -transform.up, Mathf.Infinity);
+        if (state == State.Attack || state == State.Navigation || state == State.Move)
         {
-            while (Vector2.Dot(player.transform.position, redTank) != Vector2.Dot(redTank, player.transform.position))
+            if (hit == true)
             {
-                tankRedRigidbody.AddTorque(constSpeed * Time.deltaTime);
+                if (hit.collider.tag == "Player")
+                {
+                    Shooting();
+                }
+                else if (hit.collider.tag == "Stone")
+                {
+                    Vector2 direction = hit.point - (Vector2)barrel.transform.position;
+                    Vector2 normal = hit.normal.normalized;
+                    RaycastHit2D hit2 = Physics2D.Raycast(hit.point, Vector2.Reflect(direction, normal), Mathf.Infinity);
+                    if (hit2 == true && hit2.collider.tag == "Player")
+                    {
+                        Shooting();
+                    }
+                }
             }
-            tankRedRigidbody.AddRelativeForce(Vector2.down * constSpeed * Time.deltaTime);
+        }
+    }
+    void Navigation()
+    {
+        if (state == State.Navigation)
+        {
+            Vector2 directionTankToPoint = (point[position].position - barrel.transform.position).normalized;
+            Ray2D directionRay = new Ray2D(barrel.transform.position, -transform.up);
+            Vector2 direction = directionRay.direction.normalized;
+            Quaternion rotation = new Quaternion();
+            rotation.SetFromToRotation(direction, directionTankToPoint);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation * transform.rotation, slerp * Time.deltaTime);
+            navigationTimer -= Time.deltaTime;
+            Raycast();
+            if (navigationTimer < 0)
+            {
+                state = State.Move;
+                navigationTimer = 6f;
+            }
+        }
+    }
+    
+    void Move()
+    {
+        if (state == State.Move)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, point[position].position, tankSpeed * Time.deltaTime);
+            moveTimer -= Time.deltaTime;
+            if (moveTimer < 0)
+            {
+                state = State.Attack;
+                moveTimer = 4f;
+            }
+        }
+    }
+    void RotateAtTank()
+    {
+        if (state == State.Attack)
+        {
+            Vector2 directionRedBlue = (Tank.tankTransform.position - barrel.transform.position).normalized;
+            Ray2D directionRay = new Ray2D(barrel.transform.position, -transform.up);
+            Vector2 direction = directionRay.direction.normalized;
+            Quaternion rotation = new Quaternion();
+            rotation.SetFromToRotation(direction, directionRedBlue);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation * transform.rotation, slerp * Time.deltaTime);
+            attackTimer -= Time.deltaTime;
+            if(attackTimer < 0)
+            {
+                state = State.Choice;
+                attackTimer = 3f;
+            }
+        }
+    }
+    void Choice()
+    {
+        if (state == State.Choice)
+        {
+            System.Random random = new System.Random();
+            int choice = random.Next(0, 4);
+            while (choice == position)
+            {
+                choice = random.Next(0, 4);
+            }
+            state = State.Navigation;
+            position = choice;
+        }
+    }
+    void Shooting()
+    {
+        float fireRate = 0.2f;
+        shootTimer += Time.deltaTime;
+        if (shootTimer > fireRate)
+        {
+            GameObject bullet = Instantiate(bulletPrefab, barrel.position, barrel.rotation);
+            Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
+            rb.AddForce(-barrel.up * bulletSpeed, ForceMode2D.Impulse);
+            shootTimer = 0;
         }
     }
 }

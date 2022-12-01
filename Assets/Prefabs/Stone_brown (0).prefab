@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8132309651284958460}
   - component: {fileID: 8132309651284958461}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: stoneBrown_sprite
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,7 +95,7 @@ GameObject:
   - component: {fileID: 8132309652701792006}
   - component: {fileID: 8132309652701792007}
   - component: {fileID: 6045989494449048355}
-  m_Layer: 0
+  m_Layer: 1
   m_Name: Stone_brown (0)
   m_TagString: Stone
   m_Icon: {fileID: 0}
@@ -110,7 +110,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8132309652701792004}
   m_LocalRotation: {x: 0, y: 0, z: 0.35169452, w: 0.9361148}
-  m_LocalPosition: {x: -31.1, y: -18.3, z: -0.6265713}
+  m_LocalPosition: {x: -31.1, y: -18.3, z: 0}
   m_LocalScale: {x: 1.0000001, y: 1.0000001, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

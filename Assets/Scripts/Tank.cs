@@ -8,12 +8,14 @@ public class Tank : MonoBehaviour
     [SerializeField] AudioClip Track;
     AudioSource tankAudio;
     Rigidbody2D tankRigidbody;
+    public static Transform tankTransform;
     public enum State { Attack, Stop };
     public static State state = State.Attack;
     void Start()
     {
         tankAudio = GetComponent<AudioSource>();
         tankRigidbody = GetComponent<Rigidbody2D>();
+        tankTransform = GetComponent<Transform>();
     }
     void Update()
     {   

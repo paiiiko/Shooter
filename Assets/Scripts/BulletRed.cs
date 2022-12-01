@@ -8,7 +8,7 @@ public class BulletRed : MonoBehaviour
 {
     Vector2 min;
     Vector2 max;
-    public static Rigidbody2D rb;
+    Rigidbody2D rb;
     void Start()
     {
         min = Camera.main.ViewportToWorldPoint(new Vector2(0, 0));
@@ -30,8 +30,9 @@ public class BulletRed : MonoBehaviour
                 ScoresController.ScoreRed++;
                 Destroy(gameObject);
                 SceneManager.LoadScene(0);
+                TankRed.state = TankRed.State.Choice;
                 break;
-            case "bulletRed":
+            case "CPU":
                 Destroy(gameObject);
                 break;
             case "BulletBlue":
@@ -44,7 +45,7 @@ public class BulletRed : MonoBehaviour
                 Vector2 derection = -collision.relativeVelocity.normalized;
                 Vector2 normal = collision.contacts[0].normal;
                 Vector2 newDerection = Vector2.Reflect(derection, normal);
-                rb.velocity = newDerection * (Cannon.bulletSpeed * Time.deltaTime);
+                rb.AddForce(newDerection * 5f, ForceMode2D.Impulse);
                 break;
         }
     }
